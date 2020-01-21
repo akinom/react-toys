@@ -4,6 +4,7 @@ import {SelectionTable} from './Stateless'
 export class TwoSelectTables extends React.Component {
     constructor(props) {
         super(props);
+        console.log('create TwoSelectTables');
         this.state = {
             tables: TwoSelectTables.TableData,
             active: [undefined, undefined]
@@ -30,7 +31,11 @@ export class TwoSelectTables extends React.Component {
     }
 
     render() {
+        console.log("render TwoSelectTables");
         return <div className={'container'}>
+            <div className={'row'}>
+                <em> select and highlight a row </em>
+            </div>
             <div className={'row'}>
                 <div className={'col-6'}>
                     {this.renderTable(0)}
@@ -89,11 +94,15 @@ export class SelectAndShow extends React.Component {
     }
 
     render() {
+        console.log('render SelectAndShow');
         let image = this.state.urlPick ?
             <img src={this.state.urlPick.url}
                  alt={'Image showing ' + this.state.urlPick.name + ' near ' + this.state.urlPick.loc}/> :
             <p>Please select something </p>
         return (<div {...this.props} className={'container'}>
+            <div className={'row'}>
+                <em> click on row and see related image </em>
+            </div>
             <div className={'row'}>
                 <div className={'col-6'}>
                     <SelectionTable headers={['name', 'loc']} data={this.state.urls} callback={this.urlPick.bind(this)}/>

@@ -26,6 +26,7 @@ export class ChooseOneDivs extends React.Component {
 export class SelectionTable extends React.Component {
     constructor(props) {
         super(props);
+        console.log('create SelectionTable');
         this.stdProps = Object.assign({}, props)
         delete this.stdProps['data']
         delete this.stdProps['headers']
@@ -38,6 +39,7 @@ export class SelectionTable extends React.Component {
     }
 
     render() {
+        console.log('render SelectionTable');
         let lst = this.props.data;
         let hrds = this.props.headers;
         let rowProps = (this.props.callback) ? {onClick: this.handleClick.bind(this)} : {}
