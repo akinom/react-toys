@@ -43,7 +43,7 @@ export class SubmitAndFilter extends React.Component {
             <div className={'container-fluid'}>
                 <div>
                     <form onSubmit={this.handleSubmit.bind(this)}>
-                        Location:
+                        Exact Location:
                         <input type="text" name="loc" value={this.state.filter}  onChange={this.setFilter.bind(this)}/>
                             <button>Filter</button>
                     </form>
