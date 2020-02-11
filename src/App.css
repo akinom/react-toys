@@ -16,6 +16,9 @@
   font-weight: bold;
 }
 
+.offset {
+  margin-bottom: 12px;
+}
 .dark {
   background-color: #282c34;
   color: white;

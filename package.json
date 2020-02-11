@@ -1,8 +1,9 @@
 {
-  "name": "react-toys",
+  "name": "DoIt",
   "version": "0.1.0",
   "private": true,
-  "homepage": ".",
+  "homepage": "http://www.mcmprogramming.com/mo.meven/practice/arithmetic/",
+  "dev_homepage": ".",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.4.0",
