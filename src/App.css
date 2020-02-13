@@ -38,3 +38,18 @@ tr.selected {
   background-color: #d7d7d7;
 }
 
+h1 {
+  width: 100%;
+}
+
+#stats div:first-child {
+  margin-left: 0px;
+}
+
+#correct  {
+  max-width: 8em;
+}
+
+#progress {
+vertical-align: center; }
+
