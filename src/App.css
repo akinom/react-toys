@@ -42,9 +42,11 @@ h1 {
   width: 100%;
 }
 
+
 #stats div:first-child {
   margin-left: 0px;
 }
+
 
 #correct  {
   max-width: 8em;

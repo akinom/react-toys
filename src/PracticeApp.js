@@ -5,7 +5,7 @@ import {TimesTable} from './NumbersPractice'
 export class App extends React.Component {
     render() {
         return (
-            <div class={'container'}>
+            <div className={'container'}>
                 <div id={'title'} className={'row'}>
                     <h1>
                         Arithmetic Practice

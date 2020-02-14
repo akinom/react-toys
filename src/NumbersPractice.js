@@ -4,25 +4,17 @@ export class TimesTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            history: [],
+            history: new ProblemList({}),
             problem: this.newProblem(),
-            ncorrect: 0,
-            nwrong: 0,
+            stats: new AnswerStats(),
             input: ''
         }
-
     }
 
     newProblem() {
-        let left = Math.floor(Math.random() * 10) + 2
-        let right = Math.floor(Math.random() * 10) + 1
-        return {
-            left: left,
-            right: right,
-            op: '*',
-            result: left * right,
-            correct: undefined
-        };
+        let p = new Problem({})
+        p.state = p.seedState();
+        return p
     }
 
     trackInput(event) {
@@ -31,97 +23,147 @@ export class TimesTable extends React.Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        console.log(this)
-        let prob = this.state.problem
-        prob.correct = (this.state.input.trim() === prob.result.toString());
-        if (prob.correct) {
-            this.setState({ncorrect: this.state.ncorrect + 1})
-        } else {
-            this.setState({nwrong: this.state.nwrong + 1})
-        }
-        this.state.history.push(this.state.problem)
+        let updatedProblem = this.state.problem;
+        updatedProblem.state.answer = parseInt(this.state.input)
+        updatedProblem.state.showResult = true
+        this.state.history.addProblem(updatedProblem)
+        this.state.stats.countAnswer(updatedProblem.isCorrect())
+
         this.setState({
-            history: this.state.history,
             problem: this.newProblem(),
+            history: this.state.history,
+            stats: this.state.stats,
             input: '',
         })
     }
 
     render() {
         let modulo = 3
-        let h_len = this.state.history.length
-        let hist = this.state.history
-        let history_lis = hist.map((prob, i) => (<HistoricProblem problem={hist[h_len - i - 1]}/>))
         let congrats = ''
-        if (this.state.ncorrect % modulo === 0 && this.state.ncorrect > 0) {
+        if (this.state.stats.ncorrect % modulo === 0 && this.state.stats.ncorrect > 0) {
             congrats = (<span className={'alert alert-primary'}> Yes !! {this.state.ncorrect} Correct Answers  </span>)
         }
-        let percent = (this.state.ncorrect % modulo ) * (100 /modulo)
-        return (
-            <div>
-                <div className='offset container'>
-                    <div className={'row'}>
-                        <form onSubmit={this.handleSubmit.bind(this)}>
-                            <div className="input-group">
-                                <div className="input-group-prepend">
+        let percent = (this.state.stats.ncorrect % modulo ) * (100 /modulo)
+        return <div>
+            <div className='offset container-sm'>
+                <div className={'row'}>
+                    <form onSubmit={this.handleSubmit.bind(this)}>
+                        <div className="input-group">
+                            <div className="input-group-prepend">
                                     <span className="input-group-text">
-                                        {this.state.problem.left} {this.state.problem.op} {this.state.problem.right} =
+                                        {this.state.problem.render()} &nbsp; =
                                     </span>
-                                </div>
-                                <input type="number" className="form-control" value={this.state.input}
-                                       onChange={this.trackInput.bind(this)}/>
-                                <input type="submit" style={{display: 'none'}}/>
                             </div>
-                        </form>
+                            <input type="number" className="form-control" value={this.state.input}
+                                   onChange={this.trackInput.bind(this)}/>
+                            <input type="submit" style={{display: 'none'}}/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div className='container-sm'>
+                <div className={'row'} id={'stats'}>
+                    <div className={'col alert alert-success'} id={'correct'}>
+                        <span> {this.state.stats.ncorrect} correct  </span>
+                    </div>
+                    <div className={'col alert'} id={'progress'}>
+                        <div className="progress">
+                            <div className="progress-bar" role="progressbar" style={{width: percent + '%'}}
+                                 aria-valuenow="25"
+                                 aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
                     </div>
                 </div>
-                <div className='container-sm'>
-                    <div className={'row'} id={'stats'}>
-                        <div className={'col alert alert-success'} id={'correct'}>
-                            <span> {this.state.ncorrect} correct  </span>
-                        </div>
-                        <div className={'col alert'} id={'progress'}>
-                            <div className="progress">
-                                <div className="progress-bar" role="progressbar" style={{width: percent + '%'}} aria-valuenow="25"
-                                     aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className={'row'} id={'congrats'}>
+                <div className={'row'} id={'congrats'}>
                     {congrats}
-                    </div>
-                    {history_lis}
+                </div>
+                <div className={'row'}>
+                    {this.state.history.render()}
                 </div>
             </div>
-        );
+        </div>;
     }
 }
 
-class HistoricProblem extends React.Component {
+
+class ProblemList extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { problems : []}
+    }
+
+    addProblem(problem) {
+        this.state.problems.push(problem)
+    }
+
     render() {
-        let prob = this.props.problem
-        let kls = prob.correct ? 'alert-success' : 'alert-danger'
+        const KLS_SELECTION = {undefined: '', true: 'alert list-group-item list-group-item-success', false: 'alert list-group-item list-group-item-danger'}
+        //let showResult = this.state.mode ==='showResults'
+        let display = []
+        for (let i = this.state.problems.length -1; i >= 0; i--) {
+            let problem = this.state.problems[i]
+            let kls = KLS_SELECTION[problem.isCorrect()]
+            display.push(  <li key={i} className={kls}> {problem.render() }</li> )
+        }
+
         return (
-            <div className={'row alert ' + kls} role={'alert'} id={'history'}>
+            <ul className="list-group problemList">
+                { display }
+            </ul>
+        )
+    }
+
+}
+
+class Problem extends React.Component {
+    seedState() {
+        let left = Math.floor(Math.random() * 10) + 2
+        let right = Math.floor(Math.random() * 10) + 1
+        return {
+            left: left,
+            right: right,
+            op: '*',
+            result: left * right,
+            showResult: false
+        };
+    }
+
+    isCorrect() {
+        if (this.state.answer === undefined) {
+            return undefined
+        } else {
+            return  this.state.answer === this.state.result
+        }
+    }
+
+    render() {
+        let problem = this.state;
+        let withResult = ''
+        if ( this.state.showResult)  {
+            withResult = (<span> = {this.state.result}</span>)
+        }
+        return (
             <span>
-                {prob.left} {prob.op} {prob.right} = {prob.result}
+                {problem.left} {problem.op} {problem.right} {withResult}
             </span>
-            </div>
         )
     }
 }
 
 
-class HistoricProblem extends React.Component {
-    render() {
-        let prob = this.props.problem
-        let kls = prob.correct ? 'alert-success' : 'alert-danger'
-        return (
-            <div className={'row alert ' + kls} role={'alert'} id={'history'}>
-            <span>
-                {prob.left} {prob.op} {prob.right} = {prob.result}
-            </span>
-            </div>
-        )
+class AnswerStats  {
+    constructor() {
+        this.ncorrect  = 0
+        this.nwrong = 0
     }
+
+    countAnswer(correct) {
+        if (correct) {
+            this.ncorrect += 1
+        } else {
+            this.nwrong += 1
+        }
+    }
+
 }
