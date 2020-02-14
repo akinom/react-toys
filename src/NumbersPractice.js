@@ -13,7 +13,7 @@ export class TimesTable extends React.Component {
 
     newProblem() {
         let p = new Problem()
-        p.state = p.seedState();
+        p.state = p.seedState(2);
         return p
     }
 
@@ -79,7 +79,7 @@ class Feedback extends React.Component {
         let stats = this.props.stats
         let feedback = ''
         if (stats.nConsecCorrect % modulo === 0 && stats.nConsecCorrect > 0) {
-            feedback = (<span className={'alert alert-primary'}> Yes !! {stats.nConsecCorrect} Consecutive Correct Answers  </span>)
+            feedback = (<span className={'alert alert-primary'}> {stats.nConsecCorrect} Consecutive Correct  </span>)
         } else {
             let percent = (stats.nConsecCorrect % modulo) * (100 / modulo)
             feedback = (
@@ -114,16 +114,66 @@ class ProblemList extends React.Component {
     }
 }
 
-class Problem {
-    seedState() {
-        let left = Math.floor(Math.random() * 10) + 2
-        let right = Math.floor(Math.random() * 10) + 1
-        this.left = left;
-        this.right = right;
-        this.op = '*';
-        this.result = left * right;
-        this.showResult = false
 
+const problenLevels = [
+    [simpleTimes],
+    [simpleTimes, simpleDivision],
+    [mediumTimes, mediumDivision]
+]
+
+function simpleTimes(ths) {
+    let left = Math.floor(Math.random() * 9) + 2
+    let right = Math.floor(Math.random() * 10) + 2
+    ths['left'] = left;
+    ths['right'] = right;
+    ths['op'] = '*';
+    ths['result'] = left * right;
+}
+
+function simpleDivision(ths) {
+    let left = Math.floor(Math.random() * 9) + 2
+    let right = Math.floor(Math.random() * 10) + 2
+    ths['left'] = left * right
+    ths['right'] = right;
+    ths['op'] = '/';
+    ths['result'] = left;
+}
+
+function mediumLeftRight(ths) {
+    let left = Math.floor(Math.random() * 9) + 2
+    let right = Math.floor(Math.random() * 10) + 2
+    if (Math.random() <.5) {
+        left = 10 * left
+    }
+    if (Math.random() <.25) {
+        right = 10 * right
+    }
+    ths['left'] = left;
+    ths['right'] = right;
+    return ths
+}
+
+function mediumTimes(ths) {
+    mediumLeftRight(ths)
+    ths['op'] = '*';
+    ths['result'] = ths['left']  * ths['right'];
+}
+
+function mediumDivision(ths) {
+    let lr = mediumLeftRight({})
+    ths['op'] = '/';
+    ths['left'] = lr.left * lr.right
+    ths['right'] = lr.right
+    ths['result'] = lr.left
+    ths['left'] = ths['result'] * ths['right']
+}
+
+class Problem {
+    seedState(level) {
+        let nchoices = problenLevels[level].length
+        let choice = Math.floor ( Math.random() * nchoices)
+        problenLevels[level][choice](this)
+        this.showResult = false
     }
 
     isCorrect() {
@@ -133,6 +183,7 @@ class Problem {
             return this.answer === this.result
         }
     }
+
 }
 
 
