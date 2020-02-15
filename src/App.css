@@ -38,20 +38,21 @@ tr.selected {
   background-color: #d7d7d7;
 }
 
-h1 {
+h2 {
   width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
-
-#stats div:first-child {
-  margin-left: 0px;
-}
-
-
-#correct  {
+.shortCol  {
   max-width: 8em;
 }
 
 #progress {
 vertical-align: center; }
 
+.theProblem {
+  padding-left: 0px;
+  padding-bottom: 20px;
+
+}
