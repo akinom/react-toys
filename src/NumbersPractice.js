@@ -16,7 +16,7 @@ export class PresentPracticeProblems extends React.Component {
         if (this.state.test) {
             this.state.levelUpThreshold = 3
         } else {
-            this.state.levelUpThreshold = 10
+            this.state.levelUpThreshold = 12
         }
     }
 
