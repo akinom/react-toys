@@ -10,7 +10,7 @@ export class PresentPracticeProblems extends React.Component {
             problemGenerator: new LeveledProblemGenerator(),
             leveledUp : false,
             input: '',
-            test: true
+            test: false
         }
         this.state.problem = this.newProblem()
         if (this.state.test) {
