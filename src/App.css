@@ -3,6 +3,7 @@
   color: darkgreen;
   text-align: center;
 }
+
 #toyChoice .active {
   color: white;
   background-color: darkgreen;
@@ -42,17 +43,4 @@ h2 {
   width: 100%;
   margin-top: 20px;
   margin-bottom: 20px;
-}
-
-.shortCol  {
-  max-width: 8em;
-}
-
-#progress {
-vertical-align: center; }
-
-.theProblem {
-  padding-left: 0px;
-  padding-bottom: 20px;
-
 }

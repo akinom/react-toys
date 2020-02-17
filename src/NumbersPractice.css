@@ -1,0 +1,22 @@
+
+h2 {
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+
+body {
+  padding-left: .5rem;
+  padding-right: .5rem;
+}
+
+.shortCol  {
+  max-width: 8em;
+}
+
+.theProblem {
+  padding-left: 0px;
+  padding-bottom: 20px;
+
+}

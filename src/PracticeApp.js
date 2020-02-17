@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css'
+import './NumbersPractice.css'
 import {PresentPracticeProblems} from './NumbersPractice'
 
 export class App extends React.Component {

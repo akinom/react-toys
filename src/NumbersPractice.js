@@ -37,7 +37,7 @@ export class PresentPracticeProblems extends React.Component {
         updatedProblem.answer = parseInt(this.state.input)
         this.state.history.push(updatedProblem)
         this.state.stats.countAnswer(updatedProblem.isCorrect())
-        if ((this.state.stats.nConsecCorrect % this.state. levelUpThreshold ) === 0 && this.state.stats.nConsecCorrect > 0) {
+        if ((this.state.stats.nConsecCorrect % this.state.levelUpThreshold ) === 0 && this.state.stats.nConsecCorrect > 0) {
             this.state.problemGenerator.levelUp()
             leveledUp = true;
             this.state.history.push(new Message('You reached level ' + (this.state.problemGenerator.level + 1)))
@@ -71,7 +71,7 @@ export class PresentPracticeProblems extends React.Component {
 
     render() {
         return (
-            <div className='offset container-sm'>
+            <div className='container-sm'>
                 <div className={'row'}>
                      <h2>  Practice Level: {this.state.problemGenerator.level +1} </h2>
                 </div>
@@ -84,7 +84,7 @@ export class PresentPracticeProblems extends React.Component {
                         <span> {this.state.stats.ncorrect} correct  </span>
                     </div>
                     <div className={'col alert'}>
-                        <Feedback stats={this.state.stats} limit={this.state.levelUpThreshold} message={"Progress towards Next Level"}/>
+                        <Feedback stats={this.state.stats} limit={this.state.levelUpThreshold} message={"Progress to Next Level"}/>
                     </div>
                 </div>
                 <div className={'row'}>
@@ -131,7 +131,7 @@ class History extends React.Component {
         for (let i = events.length - 1; i >= 0; i--) {
             let event = events[i]
             let kls = undefined
-            if (event.isCorrect != undefined)
+            if (event.isCorrect !== undefined)
                 kls = event.isCorrect()
             display.push(<li key={i} className={KLS_SELECTION[kls]}>{event.render()}</li>)
         }
