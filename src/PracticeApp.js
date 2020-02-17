@@ -1,10 +1,10 @@
 import React from 'react';
 import './App.css'
-import {TimesTable} from './NumbersPractice'
+import {PresentPracticeProblems} from './NumbersPractice'
 
 export class App extends React.Component {
     render() {
-        return (    <TimesTable /> )
+        return (    <PresentPracticeProblems /> )
     }
 }
 

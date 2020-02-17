@@ -1,6 +1,6 @@
 import React from 'react';
 
-export class TimesTable extends React.Component {
+export class PresentPracticeProblems extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -40,6 +40,7 @@ export class TimesTable extends React.Component {
         if ((this.state.stats.nConsecCorrect % this.state. levelUpThreshold ) === 0 && this.state.stats.nConsecCorrect > 0) {
             this.state.problemGenerator.levelUp()
             leveledUp = true;
+            this.state.history.push(new Message('You reached level ' + (this.state.problemGenerator.level + 1)))
         }
         console.log(JSON.stringify(this.state.stats))
         this.setState({
@@ -51,26 +52,31 @@ export class TimesTable extends React.Component {
         })
     }
 
+    renderForm() {
+        return (
+            <form onSubmit={this.handleSubmit.bind(this)}>
+                <div className="input-group">
+                    <div className="input-group-prepend">
+                                    <span className="input-group-text">
+                                         <ReactProblem problem={this.state.problem} showResult={false}/> &nbsp; =
+                                    </span>
+                    </div>
+                    <input type="number" className="form-control" value={this.state.input}
+                           onChange={this.trackInput.bind(this)}/>
+                    <input type="submit" style={{display: 'none'}}/>
+                </div>
+            </form>
+        )
+    }
+
     render() {
-        let leveledUpMessage = this.state.leveledUp ? "Leveling Up !" : ''
         return (
             <div className='offset container-sm'>
                 <div className={'row'}>
                      <h2>  Practice Level: {this.state.problemGenerator.level +1} </h2>
                 </div>
                 <div className={'row theProblem'}>
-                        <form onSubmit={this.handleSubmit.bind(this)}>
-                            <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text">
-                                         <ReactProblem problem={this.state.problem} showResult={false}/> &nbsp; =
-                                    </span>
-                                </div>
-                                <input type="number" className="form-control" value={this.state.input}
-                                       onChange={this.trackInput.bind(this)}/>
-                                <input type="submit" style={{display: 'none'}}/>
-                            </div>
-                        </form>
+                    {this.renderForm()}
                 </div>
 
                 <div className={'row'}>
@@ -78,11 +84,11 @@ export class TimesTable extends React.Component {
                         <span> {this.state.stats.ncorrect} correct  </span>
                     </div>
                     <div className={'col alert'}>
-                        <Feedback stats={this.state.stats} limit={this.state.levelUpThreshold} message={leveledUpMessage}/>
+                        <Feedback stats={this.state.stats} limit={this.state.levelUpThreshold} message={"Progress towards Next Level"}/>
                     </div>
                 </div>
                 <div className={'row'}>
-                    <ProblemList problems={this.state.history}/>
+                    <History history={this.state.history}/>
                 </div>
             </div>)
     }
@@ -90,13 +96,14 @@ export class TimesTable extends React.Component {
 
 
 class Feedback extends React.Component {
+    displayPercent(stats, limit) {
+        return (stats.nConsecCorrect % limit) * (100 / limit)
+    }
     render() {
-        let modulo = this.props.limit
         let stats = this.props.stats
-        let feedback = this.props.message
+        let percent = this.displayPercent(stats, this.props.limit)
+        let feedback = (percent < 1) ? this.props.message : ''
         if (feedback === '') {
-            let percent = (stats.nConsecCorrect % modulo) * (100 / modulo)
-            console.log([percent, modulo]);
             feedback = (
                 <div className="progress">
                     <div className="progress-bar" role="progressbar" style={{width: percent + '%'}}
@@ -110,21 +117,23 @@ class Feedback extends React.Component {
     }
 }
 
-class ProblemList extends React.Component {
+class History extends React.Component {
     render() {
-        let problems = this.props.problems
+        let events = this.props.history
 
         const KLS_SELECTION = {
-            undefined: '',
+            undefined: 'alert list-group-item list-group-item-primary',
             true: 'alert list-group-item list-group-item-success',
             false: 'alert list-group-item list-group-item-danger'
         }
         //let showResult = this.state.mode ==='showResults'
         let display = []
-        for (let i = problems.length - 1; i >= 0; i--) {
-            let problem = problems[i]
-            let kls = KLS_SELECTION[problem.isCorrect()]
-            display.push(<li key={i} className={kls}><ReactProblem problem={problem} showResult={true}/></li>)
+        for (let i = events.length - 1; i >= 0; i--) {
+            let event = events[i]
+            let kls = undefined
+            if (event.isCorrect != undefined)
+                kls = event.isCorrect()
+            display.push(<li key={i} className={KLS_SELECTION[kls]}>{event.render()}</li>)
         }
 
         return (
@@ -217,11 +226,19 @@ class Problem {
             return this.answer === this.result
         }
     }
+
+    render(showresult) {
+        return ( <ReactProblem problem={this} showresult={showresult} />)
+    }
 }
 
 class Message {
-    render() {
-        return (<span>{this.props.message}   </span>)
+    constructor(msg) {
+        this.state = { message : msg}
+    }
+
+    render(showresult) {
+        return (<span>{this.state.message}   </span>)
     }
 }
 
@@ -239,6 +256,7 @@ class ReactProblem extends React.Component {
         )
     }
 }
+
 
 
 class AnswerStats {
