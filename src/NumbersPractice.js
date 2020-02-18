@@ -1,8 +1,8 @@
 import React  from 'react';
-var AnswerStats = require('./models/AnswerStats')
-var LeveledProblemGenerator = require('./models/LeveledProblemGenerator')
-var Problem = require('./models/Problem')
-var helper = require('./models/helper')
+import  AnswerStats from './models/AnswerStats';
+import  LeveledProblemGenerator from './models/LeveledProblemGenerator'
+import  Problem from './models/Problem';
+import {ordinal_str} from './models/helper'
 
 export class PresentPracticeProblems extends React.Component {
     constructor(props) {
@@ -14,11 +14,12 @@ export class PresentPracticeProblems extends React.Component {
             stats: new AnswerStats(),
             problemGenerator: new LeveledProblemGenerator(),
             leveledUp : false,
-            topLevelRounds: 1,
-            test: true
+            topLevelRounds: 0,
+            test: false
         }
         this.state.problem = this.newProblem()
         if (this.state.test) {
+            this.state.problemGenerator.changeLevelBy(5)
             this.state.levelUpThreshold = 2
         } else {
             this.state.levelUpThreshold = 12
@@ -35,17 +36,16 @@ export class PresentPracticeProblems extends React.Component {
 
     handleSubmit() {
         let updateProblem = this.state.problem
+        let topLevelRound = this.state.topLevelRounds;
         console.log('PresentPracticeProblems handleSubmit ' + JSON.stringify(updateProblem))
         let leveledUp = false;
         this.state.history.push( (<ProblemComponent problem={updateProblem} mode={'solution'} highlight={! updateProblem.isCorrect()}/> ) )
         this.state.stats.countAnswer(updateProblem.isCorrect())
         if ((this.state.stats.nConsecCorrect % this.state.levelUpThreshold ) === 0 && this.state.stats.nConsecCorrect > 0) {
             let levelDescr = this.state.problemGenerator.getLevelDescription();
-            if (this.state.problemGenerator.atTopLevel()) {
-                this.state.topLevelRounds += 1
-            }
             leveledUp = true;
             this.state.problemGenerator.changeLevelBy(1)
+            if (this.state.problemGenerator.atTopLevel()) { topLevelRound += 1 }
             this.state.history.push( (<Message message={'Finished ' + levelDescr} /> ) )
         }
         console.log(JSON.stringify(this.state.stats))
@@ -53,6 +53,7 @@ export class PresentPracticeProblems extends React.Component {
             problem: this.newProblem(),
             history: this.state.history,
             stats: this.state.stats,
+            topLevelRounds: topLevelRound,
             leveledUp: leveledUp
         })
     }
@@ -62,13 +63,15 @@ export class PresentPracticeProblems extends React.Component {
         let levelDescr = this.state.problemGenerator.getLevelDescription();
         let feedbackMsg = ''
         if (this.state.topLevelRounds > 1) {
-            feedbackMsg = helper.ordinal_str(this.state.topLevelRounds) + ' Time '
+            feedbackMsg = ordinal_str(this.state.topLevelRounds) + ' Time At Top Level'
+        } else {
+            feedbackMsg += 'Starting Level ' + this.state.problemGenerator.level
         }
-        feedbackMsg += 'Working on ' + levelDescr
+
         return (
             <div className='container-sm'>
                 <div className={'row'}>
-                     <h2>  Practice {levelDescr} </h2>
+                     <h2>  {levelDescr} </h2>
                 </div>
                 <div className={'row theProblem'}>
                     <ProblemComponent problem={this.state.problem} mode='form' callback={this.handleSubmit.bind(this)} />
