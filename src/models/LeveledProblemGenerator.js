@@ -1,8 +1,32 @@
 
+function pickOneOf(arr) {
+    let pick = Math.floor(Math.random() * arr.length)
+    return arr[pick]
+}
+
+function simpleAddition(ths) {
+    let left = Math.floor(Math.random() * 100)
+    let right = pickOneOf([2, 3, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 9, 9, 9, 11, 11])
+    ths['left'] = left;
+    ths['right'] = right;
+    ths['op'] = '+';
+    ths['result'] = left + right;
+}
+
+
+function simpleSubtraction(ths) {
+    let left = Math.floor(Math.random() * 80) + 20
+    let right = pickOneOf([2, 3, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 9, 9, 9, 11, 11])
+    ths['left'] = left;
+    ths['right'] = right;
+    ths['op'] = '-';
+    ths['result'] = left - right;
+}
+
 
 function simpleTimes(ths)  {
-    let left = Math.floor(Math.random() * 9) + 2
-    let right = Math.floor(Math.random() * 10) + 2
+    let left = pickOneOf([2, 3, 4, 4, 5, 6, 6, 7, 7, 8, 8, 9, 9, 11])
+    let right = pickOneOf([4, 5, 6, 7, 8, 9, 11])
     ths['left'] = left;
     ths['right'] = right;
     ths['op'] = '*';
@@ -10,25 +34,28 @@ function simpleTimes(ths)  {
 };
 
 function simpleDivision(ths)  {
-    let left = Math.floor(Math.random() * 9) + 2
-    let right = Math.floor(Math.random() * 10) + 2
-    ths['left'] = left * right
-    ths['right'] = right;
+    let f1 = pickOneOf([2, 3, 4, 4, 5, 6, 6, 7, 7, 8, 8, 9, 9, 11])
+    let f2 = pickOneOf([4, 5, 6, 7, 8, 9])
+    ths['left'] = f1 * f2
+    ths['right'] = f2
     ths['op'] = '/';
-    ths['result'] = left;
+    ths['result'] = f1;
 }
 
 function mediumLeftRight(ths)  {
-    let left = Math.floor(Math.random() * 9) + 2
-    let right = Math.floor(Math.random() * 10) + 2
+    let left = pickOneOf([2, 3, 4, 4, 5, 6, 6, 7, 7, 8, 8, 9, 9, 11])
+    let right = pickOneOf([4, 5, 6, 7, 8, 9, 11])
     if (Math.random() < .5) {
         left = 10 * left
-    }
-    if (Math.random() < .25) {
+    } else if (Math.random() < .5) {
         right = 10 * right
     }
+
     ths['left'] = left;
     ths['right'] = right;
+    ths['op'] = '*';
+    ths['result'] = left * right;
+
     return ths
 }
 
@@ -53,13 +80,21 @@ module.exports = class LeveledProblemGenerator {
         this.level = 0
         this.problemLevels = [
             [simpleTimes],
-            [simpleTimes, simpleDivision],
-            [mediumTimes, mediumDivision]
+            [simpleDivision],
+            [simpleAddition],
+            [simpleSubtraction],
+            [simpleTimes, simpleDivision, mediumTimes, mediumDivision],
+            [mediumTimes],
+            [mediumDivision],
+            [simpleTimes, simpleDivision, mediumTimes, mediumDivision, mediumTimes, mediumDivision]
         ];
     }
 
-    levelUp() {
-        this.level += 1
+    changeLevelBy(delta) {
+        this.level += delta
+        if (this.level < 0) {
+            this.level = 0
+        }
     }
 
     genProblem(problem) {
@@ -70,3 +105,10 @@ module.exports = class LeveledProblemGenerator {
     }
 }
 
+if (false) {
+    for (let n = 0; n < 100; n++) {
+        let o = {}
+        JSON.stringify(simpleSubtraction(o))
+        console.log(JSON.stringify(o))
+    }
+}

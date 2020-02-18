@@ -38,7 +38,7 @@ export class PresentPracticeProblems extends React.Component {
         this.state.history.push( (<ProblemComponent problem={updateProblem} mode={'solution'} highlight={! updateProblem.isCorrect()}/> ) )
         this.state.stats.countAnswer(updateProblem.isCorrect())
         if ((this.state.stats.nConsecCorrect % this.state.levelUpThreshold ) === 0 && this.state.stats.nConsecCorrect > 0) {
-            this.state.problemGenerator.levelUp()
+            this.state.problemGenerator.changeLevelBy(1)
             leveledUp = true;
             this.state.history.push( (<Message message={'You reached level ' + (this.state.problemGenerator.level + 1) } /> ) )
         }
