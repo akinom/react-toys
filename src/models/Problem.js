@@ -1,6 +1,6 @@
 
 
-module.exports = class Problem {
+export class Problem {
     generate(generator) {
         generator.genProblem(this)
         this.answer = undefined
@@ -16,3 +16,4 @@ module.exports = class Problem {
 
 }
 
+export default Problem

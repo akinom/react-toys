@@ -1,5 +1,5 @@
 
-module.exports =  class AnswerStats {
+export class AnswerStats {
     constructor() {
         this.ncorrect = 0
         this.nwrong = 0
@@ -19,3 +19,4 @@ module.exports =  class AnswerStats {
     }
 }
 
+export default AnswerStats;

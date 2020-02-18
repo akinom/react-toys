@@ -75,7 +75,7 @@ function mediumDivision(ths)  {
 }
 
 
-module.exports = class LeveledProblemGenerator {
+export class LeveledProblemGenerator {
     constructor() {
         this.problemLevels = [
             {descripton: 'Multiplication', fcts: [simpleTimes]},
@@ -114,6 +114,9 @@ module.exports = class LeveledProblemGenerator {
     }
 }
 
+
+export default LeveledProblemGenerator
+
 if (false) {
     for (let n = 0; n < 100; n++) {
         let o = {}
@@ -121,3 +124,5 @@ if (false) {
         console.log(JSON.stringify(o))
     }
 }
+
+
