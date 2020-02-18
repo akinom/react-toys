@@ -2,6 +2,7 @@ import React  from 'react';
 var AnswerStats = require('./models/AnswerStats')
 var LeveledProblemGenerator = require('./models/LeveledProblemGenerator')
 var Problem = require('./models/Problem')
+var helper = require('./models/helper')
 
 export class PresentPracticeProblems extends React.Component {
     constructor(props) {
@@ -13,6 +14,7 @@ export class PresentPracticeProblems extends React.Component {
             stats: new AnswerStats(),
             problemGenerator: new LeveledProblemGenerator(),
             leveledUp : false,
+            topLevelRounds: 1,
             test: true
         }
         this.state.problem = this.newProblem()
@@ -38,9 +40,13 @@ export class PresentPracticeProblems extends React.Component {
         this.state.history.push( (<ProblemComponent problem={updateProblem} mode={'solution'} highlight={! updateProblem.isCorrect()}/> ) )
         this.state.stats.countAnswer(updateProblem.isCorrect())
         if ((this.state.stats.nConsecCorrect % this.state.levelUpThreshold ) === 0 && this.state.stats.nConsecCorrect > 0) {
-            this.state.problemGenerator.changeLevelBy(1)
+            let levelDescr = this.state.problemGenerator.getLevelDescription();
+            if (this.state.problemGenerator.atTopLevel()) {
+                this.state.topLevelRounds += 1
+            }
             leveledUp = true;
-            this.state.history.push( (<Message message={'You reached level ' + (this.state.problemGenerator.level + 1) } /> ) )
+            this.state.problemGenerator.changeLevelBy(1)
+            this.state.history.push( (<Message message={'Finished ' + levelDescr} /> ) )
         }
         console.log(JSON.stringify(this.state.stats))
         this.setState({
@@ -53,10 +59,16 @@ export class PresentPracticeProblems extends React.Component {
 
     render() {
         console.log('< PresentPracticeProblems render.return ' + JSON.stringify(this.state))
+        let levelDescr = this.state.problemGenerator.getLevelDescription();
+        let feedbackMsg = ''
+        if (this.state.topLevelRounds > 1) {
+            feedbackMsg = helper.ordinal_str(this.state.topLevelRounds) + ' Time '
+        }
+        feedbackMsg += 'Working on ' + levelDescr
         return (
             <div className='container-sm'>
                 <div className={'row'}>
-                     <h2>  Practice Level: {this.state.problemGenerator.level +1} </h2>
+                     <h2>  Practice {levelDescr} </h2>
                 </div>
                 <div className={'row theProblem'}>
                     <ProblemComponent problem={this.state.problem} mode='form' callback={this.handleSubmit.bind(this)} />
@@ -64,10 +76,10 @@ export class PresentPracticeProblems extends React.Component {
 
                 <div className={'row'}>
                     <div className={'col alert alert-success shortCol'}>
-                        <span> {this.state.stats.ncorrect} correct  </span>
+                        <span> {this.state.stats.ncorrect} correct </span>
                     </div>
                     <div className={'col alert'}>
-                        <Feedback stats={this.state.stats} limit={this.state.levelUpThreshold} message={"Progress to Next Level"}/>
+                        <Feedback stats={this.state.stats} limit={this.state.levelUpThreshold} message={feedbackMsg}/>
                     </div>
                 </div>
                 <div className={'row'}>

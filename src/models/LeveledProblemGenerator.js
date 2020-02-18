@@ -77,17 +77,16 @@ function mediumDivision(ths)  {
 
 module.exports = class LeveledProblemGenerator {
     constructor() {
-        this.level = 0
         this.problemLevels = [
-            [simpleTimes],
-            [simpleDivision],
-            [simpleAddition],
-            [simpleSubtraction],
-            [simpleTimes, simpleDivision, mediumTimes, mediumDivision],
-            [mediumTimes],
-            [mediumDivision],
-            [simpleTimes, simpleDivision, mediumTimes, mediumDivision, mediumTimes, mediumDivision]
+            {descripton: 'Multiplication', fcts: [simpleTimes]},
+            {descripton: 'Division', fcts: [simpleDivision]},
+            {descripton: 'Addition', fcts: [simpleAddition]},
+            {descripton: 'Subtraction', fcts: [simpleSubtraction]},
+            {descripton: 'Multiply Bigger Numbers', fcts: [mediumTimes]},
+            {descripton: 'Divide Bigger Numbers', fcts: [mediumDivision]},
+            {descripton: 'All', fcts: [simpleTimes, simpleDivision, mediumTimes, mediumDivision, mediumTimes, mediumDivision]}
         ];
+        this.level = 0
     }
 
     changeLevelBy(delta) {
@@ -97,11 +96,21 @@ module.exports = class LeveledProblemGenerator {
         }
     }
 
+    atTopLevel() {
+        return this.level >=  (this.problemLevels.length -1)
+    }
+
+    getLevelDescription() {
+        let level = this.level
+        let theLevel = level < this.problemLevels.length ?  level :  this.problemLevels.length -1
+        return this.problemLevels[theLevel].descripton
+    }
+
     genProblem(problem) {
         let theLevel = this.level < this.problemLevels.length ?  this.level :  this.problemLevels.length -1
-        let nchoices = this.problemLevels[theLevel].length
+        let nchoices = this.problemLevels[theLevel].fcts.length
         let choice = Math.floor(Math.random() * nchoices)
-        this.problemLevels[theLevel][choice](problem)
+        this.problemLevels[theLevel].fcts[choice](problem)
     }
 }
 
