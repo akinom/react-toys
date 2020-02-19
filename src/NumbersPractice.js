@@ -22,7 +22,7 @@ export class PresentPracticeProblems extends React.Component {
             this.state.problemGenerator.changeLevelBy(5)
             this.state.levelUpThreshold = 2
         } else {
-            this.state.levelUpThreshold = 12
+            this.state.levelUpThreshold = 10
         }
         console.log('PresentPracticeProblems created state ' + JSON.stringify(this.state))
     }
@@ -41,7 +41,7 @@ export class PresentPracticeProblems extends React.Component {
         let leveledUp = false;
         this.state.history.push( (<ProblemComponent problem={updateProblem} mode={'solution'} highlight={! updateProblem.isCorrect()}/> ) )
         this.state.stats.countAnswer(updateProblem.isCorrect())
-        if ((this.state.stats.nConsecCorrect % this.state.levelUpThreshold ) === 0 && this.state.stats.nConsecCorrect > 0) {
+        if ((this.state.stats.points % this.state.levelUpThreshold ) === 0 && this.state.stats.points > 0) {
             let levelDescr = this.state.problemGenerator.getLevelDescription();
             leveledUp = true;
             this.state.problemGenerator.changeLevelBy(1)
@@ -65,7 +65,7 @@ export class PresentPracticeProblems extends React.Component {
         if (this.state.topLevelRounds > 1) {
             feedbackMsg = ordinal_str(this.state.topLevelRounds) + ' Time At Top Level'
         } else {
-            feedbackMsg += 'Starting Level ' + this.state.problemGenerator.level
+            feedbackMsg += 'Starting Level ' + (this.state.problemGenerator.level + 1)
         }
 
         return (
@@ -95,7 +95,7 @@ export class PresentPracticeProblems extends React.Component {
 
 class Feedback extends React.Component {
     displayPercent(stats, limit) {
-        return (stats.nConsecCorrect % limit) * (100 / limit)
+        return (stats.points % limit) * (100 / limit)
     }
     render() {
         let stats = this.props.stats
