@@ -78,10 +78,10 @@ function mediumDivision(ths)  {
 export class LeveledProblemGenerator {
     constructor() {
         this.problemLevels = [
-            {descripton: 'Multiplication', fcts: [simpleTimes]},
-            {descripton: 'Division', fcts: [simpleDivision]},
             {descripton: 'Addition', fcts: [simpleAddition]},
             {descripton: 'Subtraction', fcts: [simpleSubtraction]},
+            {descripton: 'Multiplication', fcts: [simpleTimes]},
+            {descripton: 'Division', fcts: [simpleDivision]},
             {descripton: 'Multiply Bigger Numbers', fcts: [mediumTimes]},
             {descripton: 'Divide Bigger Numbers', fcts: [mediumDivision]},
             {descripton: 'All', fcts: [simpleTimes, simpleDivision, mediumTimes, mediumDivision, mediumTimes, mediumDivision]}
